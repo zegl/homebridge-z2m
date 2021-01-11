@@ -55,16 +55,19 @@ class CoverHandler implements ServiceHandler {
     accessory.log.debug(`Configuring WindowCovering for ${serviceName}`);
     this.service = accessory.getOrAddService(new hap.Service.WindowCovering(serviceName, endpoint));
 
-    const current = getOrAddCharacteristic(this.service, hap.Characteristic.CurrentPosition);
+    const current = getOrAddCharacteristic(this.service, hap.Characteristic.CurrentPosition)
+      .on('get', this.accessory.characteristicCallbackForOnlineState);
     if (current.props.minValue === undefined || current.props.maxValue === undefined) {
       throw new Error('CurrentPosition for Cover does not hav a rang (minValue, maxValue) defined.');
     }
     this.current_min = current.props.minValue;
     this.current_max = current.props.maxValue;
 
-    getOrAddCharacteristic(this.service, hap.Characteristic.PositionState);
+    getOrAddCharacteristic(this.service, hap.Characteristic.PositionState)
+      .on('get', this.accessory.characteristicCallbackForOnlineState);
 
-    const target = getOrAddCharacteristic(this.service, hap.Characteristic.TargetPosition);
+    const target = getOrAddCharacteristic(this.service, hap.Characteristic.TargetPosition)
+      .on('get', this.accessory.characteristicCallbackForOnlineState);
     if (target.props.minValue === undefined || target.props.maxValue === undefined) {
       throw new Error('TargetPosition for Cover does not hav a rang (minValue, maxValue) defined.');
     }
@@ -163,7 +166,7 @@ class CoverHandler implements ServiceHandler {
     // Start requesting frequent updates.
     this.updateTimer.start();
 
-    callback(null);
+    this.accessory.callSetCallbackWithOnlineState(callback);
   }
 
   static generateIdentifier(endpoint: string | undefined) {

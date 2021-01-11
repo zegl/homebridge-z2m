@@ -1,4 +1,4 @@
-import { PlatformAccessory, Logger, Service } from 'homebridge';
+import { PlatformAccessory, Logger, Service, CharacteristicGetCallback, CharacteristicSetCallback } from 'homebridge';
 import { Zigbee2mqttPlatform } from './platform';
 import { ExtendedTimer } from './timer';
 import { hap } from './hap';
@@ -13,6 +13,7 @@ export class Zigbee2mqttAccessory implements BasicAccessory {
   private readonly exposeConverterManager: ServiceCreatorManager;
   private readonly serviceHandlers = new Map<string, ServiceHandler>();
   private readonly serviceIds = new Set<string>();
+  private accessoryIsOnline: boolean;
 
   private pendingPublishData: Record<string, unknown>;
   private publishIsScheduled: boolean;
@@ -28,6 +29,10 @@ export class Zigbee2mqttAccessory implements BasicAccessory {
     return this.accessory.context.device.friendly_name;
   }
 
+  get isOnline(): boolean {
+    return this.accessoryIsOnline;
+  }
+
   constructor(
     private readonly platform: Zigbee2mqttPlatform,
     public readonly accessory: PlatformAccessory,
@@ -40,6 +45,9 @@ export class Zigbee2mqttAccessory implements BasicAccessory {
     } else {
       this.exposeConverterManager = serviceCreatorManager;
     }
+
+    // On start up always assume a device is online
+    this.accessoryIsOnline = true;
 
     // Setup delayed publishing
     this.pendingPublishData = {};
@@ -65,6 +73,19 @@ export class Zigbee2mqttAccessory implements BasicAccessory {
 
     // Immediately request an update to start off.
     this.queueAllKeysForGet();
+  }
+
+  updateOnlineState(isOnline: boolean, reason: string) : void {
+    if (isOnline !== this.accessoryIsOnline) {
+      this.accessoryIsOnline = isOnline;
+
+      // Log state change
+      if (isOnline) {
+        this.log.info(`Device ${this.displayName} is ONLINE: ${reason}`);
+      } else {
+        this.log.warn(`Device ${this.displayName} is OFFLINE: ${reason}`);
+      }
+    }
   }
 
   registerServiceHandler(handler: ServiceHandler): void {
@@ -218,6 +239,22 @@ export class Zigbee2mqttAccessory implements BasicAccessory {
     return (id === this.ieeeAddress || this.accessory.context.device.friendly_name === id);
   }
 
+  get characteristicCallbackForOnlineState(): (cb: CharacteristicGetCallback) => void {
+    return this.onlineOfOnlineCallback.bind(this);
+  }
+
+  callSetCallbackWithOnlineState(cb: CharacteristicSetCallback): void {
+    this.onlineOfOnlineCallback(cb);
+  }
+
+  private onlineOfOnlineCallback(cb: CharacteristicGetCallback | CharacteristicSetCallback) {
+    if (!this.accessoryIsOnline) {
+      cb(new Error('Accessory is offline'));
+    } else {
+      cb(null);
+    }
+  }
+
   updateDeviceInformation(info: DeviceListEntry | undefined, force_update = true) {
 
     // Only update the device if a valid device list entry is passed.
@@ -231,7 +268,7 @@ export class Zigbee2mqttAccessory implements BasicAccessory {
         this.log.error(`No device definition for device ${info.friendly_name} (${this.ieeeAddress}).`);
       } else {
         // Update accessory info
-        // Not getOrAddService is used so that the service is known in this.serviceIds and will not get filtered out.
+        // Note: getOrAddService is used so that the service is known in this.serviceIds and will not get filtered out.
         this.getOrAddService(new hap.Service.AccessoryInformation())
           .updateCharacteristic(hap.Characteristic.Name, info.friendly_name)
           .updateCharacteristic(hap.Characteristic.Manufacturer, info.definition.vendor ?? 'Zigbee2MQTT')
@@ -239,6 +276,7 @@ export class Zigbee2mqttAccessory implements BasicAccessory {
           .updateCharacteristic(hap.Characteristic.SerialNumber, info.ieee_address)
           .updateCharacteristic(hap.Characteristic.HardwareRevision, info.date_code ?? '?')
           .updateCharacteristic(hap.Characteristic.FirmwareRevision, info.software_build_id ?? '?');
+        
         // Create (new) services
         this.exposeConverterManager.createHomeKitEntitiesFromExposes(this, info.definition.exposes);
       }

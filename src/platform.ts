@@ -17,8 +17,11 @@ import * as semver from 'semver';
 export class Zigbee2mqttPlatform implements DynamicPlatformPlugin {
   public readonly config: PluginConfiguration;
   private readonly MqttClient: mqtt.MqttClient;
+  private z2mIsOnline: boolean;
   private static readonly MIN_Z2M_VERSION = '1.17.0';
   private static readonly TOPIC_BRIDGE = 'bridge/';
+  private static readonly TOPIC_DEVICE_AVAILABILITY = '/availability';
+  private static readonly STATE_ONLINE = 'online';
 
   // this is used to track restored cached accessories
   private readonly accessories: Zigbee2mqttAccessory[] = [];
@@ -35,6 +38,9 @@ export class Zigbee2mqttPlatform implements DynamicPlatformPlugin {
     } else {
       throw new Error(`Invalid configuration for ${PLUGIN_NAME}`);
     }
+
+    // On startup, assume zigbee2mqtt is online
+    this.z2mIsOnline = true;
 
     this.onMessage = this.onMessage.bind(this);
     this.didReceiveDevices = false;
@@ -136,25 +142,10 @@ export class Zigbee2mqttPlatform implements DynamicPlatformPlugin {
 
       if (topic.startsWith(Zigbee2mqttPlatform.TOPIC_BRIDGE)) {
         topic = topic.substr(Zigbee2mqttPlatform.TOPIC_BRIDGE.length);
-        if (topic === 'devices') {
-          // Update accessories
-          const devices: DeviceListEntry[] = JSON.parse(payload.toString());
-          this.handleReceivedDevices(devices);
-        } else if (topic === 'state') {
-          const state = payload.toString();
-          if (state === 'offline') {
-            this.log.error('Zigbee2MQTT is OFFLINE!');
-            // TODO Mark accessories as offline somehow.
-          }
-        } else if (topic === 'info' || topic === 'config') {
-          // New topic (bridge/info) and legacy topic (bridge/config) should both contain the version number.
-          const info = JSON.parse(payload.toString());
-          if ('version' in info) {
-            this.checkZigbee2MqttVersion(info['version'], fullTopic);
-          } else {
-            this.log.error(`No version found in message on '${fullTopic}'.`);
-          }
-        }
+        this.handleMessageAboutBridge(fullTopic, topic, payload);
+      } else if (topic.endsWith(Zigbee2mqttPlatform.TOPIC_DEVICE_AVAILABILITY)) {
+        topic = topic.substr(0, topic.length - Zigbee2mqttPlatform.TOPIC_DEVICE_AVAILABILITY.length);
+        this.handleDeviceAvailabilityUpdate(fullTopic, topic, payload);
       } else if (!topic.endsWith('/get') && !topic.endsWith('/set')) {
         // Probably a status update from a device
         this.handleDeviceUpdate(topic, payload.toString());
@@ -167,6 +158,55 @@ export class Zigbee2mqttPlatform implements DynamicPlatformPlugin {
         this.log.error(`Failed to process MQTT message on '${fullTopic}'. (Maybe check the MQTT version?)`);
         this.log.error(Error);
       }
+    }
+  }
+
+  private handleMessageAboutBridge(fullTopic: string, topic: string, payload: Buffer) {
+    if (topic === 'devices') {
+      // Update accessories
+      const devices: DeviceListEntry[] = JSON.parse(payload.toString());
+      this.handleReceivedDevices(devices);
+    } else if (topic === 'state') {
+      this.handleZigbee2MqttStateUpdate(payload.toString());
+    } else if (topic === 'info' || topic === 'config') {
+      // New topic (bridge/info) and legacy topic (bridge/config) should both contain the version number.
+      const info = JSON.parse(payload.toString());
+      if ('version' in info) {
+        this.checkZigbee2MqttVersion(info['version'], fullTopic);
+      } else {
+        this.log.error(`No version found in message on '${fullTopic}'.`);
+      }
+    }
+  }
+
+  private handleDeviceAvailabilityUpdate(fullTopic: string, topic: string, payload: Buffer) {
+    const newStateIsOnline = (payload.toString() === Zigbee2mqttPlatform.STATE_ONLINE);
+    const accessory = this.accessories.find((acc) => acc.matchesIdentifier(topic));
+    if (accessory) {
+      try {
+        accessory.updateOnlineState(newStateIsOnline, 'MQTT: ' + fullTopic);
+      } catch (Error) {
+        this.log.error('Failed to process online/offline status update.');
+        this.log.error(Error);
+      }
+    } else {
+      this.log.debug(`Unhandled message on topic: ${fullTopic}`);
+    }
+    
+  }
+
+  private handleZigbee2MqttStateUpdate(state: string) {
+    const isOnlineNow = (state === Zigbee2mqttPlatform.STATE_ONLINE);
+    if (isOnlineNow !== this.z2mIsOnline) {
+      this.z2mIsOnline = isOnlineNow;
+      const msg = 'zigbee2mqtt is now ' + state;
+      if (isOnlineNow) {
+        this.log.info(msg);
+      } else {
+        this.log.warn(msg);
+      }
+
+      this.accessories.forEach(a => a.updateOnlineState(isOnlineNow, msg));
     }
   }
 

@@ -43,7 +43,7 @@ abstract class BasicSensorHandler implements ServiceHandler {
   protected serviceName: string;
   identifier = '';
 
-  constructor(accessory: BasicAccessory, protected readonly sensorExpose: ExposesEntryWithProperty,
+  constructor(protected readonly accessory: BasicAccessory, protected readonly sensorExpose: ExposesEntryWithProperty,
     otherExposes: ExposesEntryWithBinaryProperty[], identifierGen: IdentifierGenerator, service: ServiceConstructor,
     additionalSubType?: string | undefined) {
     const endpoint = sensorExpose.endpoint;
@@ -90,7 +90,8 @@ abstract class BasicSensorHandler implements ServiceHandler {
     this.tamperExpose = exposes.find(e => e.name === 'tamper' && exposesIsPublished(e));
 
     if (this.tamperExpose !== undefined) {
-      getOrAddCharacteristic(service, hap.Characteristic.StatusTampered);
+      getOrAddCharacteristic(service, hap.Characteristic.StatusTampered)
+        .on('get', this.accessory.characteristicCallbackForOnlineState);
       const mapping = new Map<CharacteristicValue, CharacteristicValue>();
       mapping.set(this.tamperExpose.value_on, hap.Characteristic.StatusTampered.TAMPERED);
       mapping.set(this.tamperExpose.value_off, hap.Characteristic.StatusTampered.NOT_TAMPERED);
@@ -103,7 +104,8 @@ abstract class BasicSensorHandler implements ServiceHandler {
     this.lowBatteryExpose = exposes.find(e => e.name === 'battery_low' && exposesIsPublished(e));
 
     if (this.lowBatteryExpose !== undefined) {
-      getOrAddCharacteristic(service, hap.Characteristic.StatusLowBattery);
+      getOrAddCharacteristic(service, hap.Characteristic.StatusLowBattery)
+        .on('get', this.accessory.characteristicCallbackForOnlineState);
       const mapping = new Map<CharacteristicValue, CharacteristicValue>();
       mapping.set(this.lowBatteryExpose.value_on, hap.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW);
       mapping.set(this.lowBatteryExpose.value_off, hap.Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
@@ -122,7 +124,8 @@ class HumiditySensorHandler extends BasicSensorHandler {
     super(accessory, expose, allExposes, HumiditySensorHandler.generateIdentifier, (n, t) => new hap.Service.HumiditySensor(n, t));
     accessory.log.debug(`Configuring HumiditySensor for ${this.serviceName}`);
 
-    getOrAddCharacteristic(this.service, hap.Characteristic.CurrentRelativeHumidity);
+    getOrAddCharacteristic(this.service, hap.Characteristic.CurrentRelativeHumidity)
+      .on('get', this.accessory.characteristicCallbackForOnlineState);
     this.monitors.push(new PassthroughCharacteristicMonitor(expose.property, this.service, hap.Characteristic.CurrentRelativeHumidity));
   }
 
@@ -165,6 +168,9 @@ class AirPressureSensorHandler extends BasicSensorHandler {
       (n, t) => AirPressureSensorHandler.AirPressureSensor(n, t));
     accessory.log.debug(`Configuring AirPressureSensor for ${this.serviceName}`);
 
+    this.service.getCharacteristic(AirPressureSensorHandler.CharacteristicName)
+      ?.on('get', this.accessory.characteristicCallbackForOnlineState);    
+
     this.monitors.push(new PassthroughCharacteristicMonitor(expose.property, this.service, AirPressureSensorHandler.CharacteristicName));
   }
 
@@ -182,7 +188,8 @@ class TemperatureSensorHandler extends BasicSensorHandler {
     super(accessory, expose, allExposes, TemperatureSensorHandler.generateIdentifier, (n, t) => new hap.Service.TemperatureSensor(n, t));
     accessory.log.debug(`Configuring TemperatureSensor for ${this.serviceName}`);
 
-    getOrAddCharacteristic(this.service, hap.Characteristic.CurrentTemperature);
+    getOrAddCharacteristic(this.service, hap.Characteristic.CurrentTemperature)
+      .on('get', this.accessory.characteristicCallbackForOnlineState);
     this.monitors.push(new PassthroughCharacteristicMonitor(expose.property, this.service, hap.Characteristic.CurrentTemperature));
   }
 
@@ -200,7 +207,8 @@ class LightSensorHandler extends BasicSensorHandler {
     super(accessory, expose, allExposes, LightSensorHandler.generateIdentifier, (n, t) => new hap.Service.LightSensor(n, t));
     accessory.log.debug(`Configuring LightSensor for ${this.serviceName}`);
 
-    getOrAddCharacteristic(this.service, hap.Characteristic.CurrentAmbientLightLevel);
+    getOrAddCharacteristic(this.service, hap.Characteristic.CurrentAmbientLightLevel)
+      .on('get', this.accessory.characteristicCallbackForOnlineState);
     this.monitors.push(new PassthroughCharacteristicMonitor(expose.property, this.service, hap.Characteristic.CurrentAmbientLightLevel));
   }
 
@@ -221,7 +229,8 @@ abstract class BinarySensorHandler extends BasicSensorHandler {
     super(accessory, expose, otherExposes, identifierGen, service, additionalSubType);
     accessory.log.debug(`Configuring ${logName} for ${this.serviceName}`);
 
-    getOrAddCharacteristic(this.service, characteristic);
+    getOrAddCharacteristic(this.service, characteristic)
+      .on('get', this.accessory.characteristicCallbackForOnlineState);
     const mapping = new Map<CharacteristicValue, CharacteristicValue>();
     mapping.set(expose.value_on, hapOnValue);
     mapping.set(expose.value_off, hapOffValue);

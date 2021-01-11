@@ -77,7 +77,8 @@ class StatelessProgrammableSwitchHandler implements ServiceHandler {
     // Setup monitor and characteristic
     getOrAddCharacteristic(service, hap.Characteristic.ServiceLabelIndex)
       .updateValue(mapping.serviceLabelIndex ?? 0);
-    const eventCharacteristic = getOrAddCharacteristic(service, hap.Characteristic.ProgrammableSwitchEvent);
+    const eventCharacteristic = getOrAddCharacteristic(service, hap.Characteristic.ProgrammableSwitchEvent)
+      .on('get', accessory.characteristicCallbackForOnlineState);
     const valueMap = new Map<CharacteristicValue, number>();
     if (mapping.valueSinglePress !== undefined) {
       valueMap.set(mapping.valueSinglePress, hap.Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS);

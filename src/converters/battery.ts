@@ -59,9 +59,12 @@ class BatteryHandler implements ServiceHandler {
 
     accessory.log.debug(`Configuring Battery Service for ${serviceName}`);
     const service = accessory.getOrAddService(new hap.Service.BatteryService(serviceName, endpoint));
-    getOrAddCharacteristic(service, hap.Characteristic.BatteryLevel);
-    getOrAddCharacteristic(service, hap.Characteristic.StatusLowBattery);
-    getOrAddCharacteristic(service, hap.Characteristic.ChargingState);
+    getOrAddCharacteristic(service, hap.Characteristic.BatteryLevel)
+      .on('get', this.accessory.characteristicCallbackForOnlineState);
+    getOrAddCharacteristic(service, hap.Characteristic.StatusLowBattery)
+      .on('get', this.accessory.characteristicCallbackForOnlineState);
+    getOrAddCharacteristic(service, hap.Characteristic.ChargingState)
+      .on('get', this.accessory.characteristicCallbackForOnlineState);
 
     // Note: no defined exposes name for the charge state, so assuming batteries are non-chargeable.
     service.updateCharacteristic(hap.Characteristic.ChargingState, hap.Characteristic.ChargingState.NOT_CHARGEABLE);

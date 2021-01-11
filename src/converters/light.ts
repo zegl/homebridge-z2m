@@ -69,7 +69,9 @@ class LightHandler implements ServiceHandler {
     accessory.log.debug(`Configuring Light for ${serviceName}`);
     const service = accessory.getOrAddService(new hap.Service.Lightbulb(serviceName, endpoint));
 
-    getOrAddCharacteristic(service, hap.Characteristic.On).on('set', this.handleSetOn.bind(this));
+    getOrAddCharacteristic(service, hap.Characteristic.On)
+      .on('set', this.handleSetOn.bind(this))
+      .on('get', this.accessory.characteristicCallbackForOnlineState);
     const onOffValues = new Map<CharacteristicValue, CharacteristicValue>();
     onOffValues.set(this.stateExpose.value_on, true);
     onOffValues.set(this.stateExpose.value_off, false);
@@ -144,8 +146,12 @@ class LightHandler implements ServiceHandler {
         return;
       }
 
-      getOrAddCharacteristic(service, hap.Characteristic.Hue).on('set', this.handleSetHue.bind(this));
-      getOrAddCharacteristic(service, hap.Characteristic.Saturation).on('set', this.handleSetSaturation.bind(this));
+      getOrAddCharacteristic(service, hap.Characteristic.Hue)
+        .on('set', this.handleSetHue.bind(this))
+        .on('get', this.accessory.characteristicCallbackForOnlineState);
+      getOrAddCharacteristic(service, hap.Characteristic.Saturation)
+        .on('set', this.handleSetSaturation.bind(this))
+        .on('get', this.accessory.characteristicCallbackForOnlineState);
 
       if (this.colorExpose.name === 'color_hs') {
         this.monitors.push(
@@ -164,8 +170,9 @@ class LightHandler implements ServiceHandler {
     this.colorTempExpose = features.find(e => e.name === 'color_temp' && exposesHasNumericRangeProperty(e) && exposesCanBeSet(e)
       && exposesIsPublished(e)) as ExposesEntryWithNumericRangeProperty;
     if (this.colorTempExpose !== undefined) {
-      const characteristic = getOrAddCharacteristic(service, hap.Characteristic.ColorTemperature);
-      characteristic.on('set', this.handleSetColorTemperature.bind(this));
+      getOrAddCharacteristic(service, hap.Characteristic.ColorTemperature)
+        .on('set', this.handleSetColorTemperature.bind(this))
+        .on('get', this.accessory.characteristicCallbackForOnlineState);
       this.monitors.push(new PassthroughCharacteristicMonitor(this.colorTempExpose.property, service,
         hap.Characteristic.ColorTemperature));
     }
@@ -175,7 +182,9 @@ class LightHandler implements ServiceHandler {
     this.brightnessExpose = features.find(e => e.name === 'brightness' && exposesHasNumericRangeProperty(e) && exposesCanBeSet(e)
       && exposesIsPublished(e)) as ExposesEntryWithNumericRangeProperty;
     if (this.brightnessExpose !== undefined) {
-      getOrAddCharacteristic(service, hap.Characteristic.Brightness).on('set', this.handleSetBrightness.bind(this));
+      getOrAddCharacteristic(service, hap.Characteristic.Brightness)
+        .on('set', this.handleSetBrightness.bind(this))
+        .on('get', this.accessory.characteristicCallbackForOnlineState);
       this.monitors.push(new NumericCharacteristicMonitor(this.brightnessExpose.property, service, hap.Characteristic.Brightness,
         this.brightnessExpose.value_min, this.brightnessExpose.value_max));
     }
@@ -185,7 +194,7 @@ class LightHandler implements ServiceHandler {
     const data = {};
     data[this.stateExpose.property] = (value as boolean) ? this.stateExpose.value_on : this.stateExpose.value_off;
     this.accessory.queueDataForSetAction(data);
-    callback(null);
+    this.accessory.callSetCallbackWithOnlineState(callback);
   }
 
   private handleSetBrightness(value: CharacteristicValue, callback: CharacteristicSetCallback): void {
@@ -200,7 +209,7 @@ class LightHandler implements ServiceHandler {
           + (((value as number) / 100) * (this.brightnessExpose.value_max - this.brightnessExpose.value_min)));
       }
       this.accessory.queueDataForSetAction(data);
-      callback(null);
+      this.accessory.callSetCallbackWithOnlineState(callback);
     } else {
       callback(new Error('brightness not supported'));
     }
@@ -218,7 +227,7 @@ class LightHandler implements ServiceHandler {
       }
       data[this.colorTempExpose.property] = value;
       this.accessory.queueDataForSetAction(data);
-      callback(null);
+      this.accessory.callSetCallbackWithOnlineState(callback);
     } else {
       callback(new Error('color temperature not supported'));
     }
@@ -231,10 +240,10 @@ class LightHandler implements ServiceHandler {
       const data = {};
       data[this.colorComponentAExpose.property] = value;
       this.accessory.queueDataForSetAction(data);
-      callback(null);
+      this.accessory.callSetCallbackWithOnlineState(callback);
     } else if (this.colorExpose?.name === 'color_xy') {
       this.convertAndPublishHueAndSaturationAsXY();
-      callback(null);
+      this.accessory.callSetCallbackWithOnlineState(callback);
     } else {
       callback(new Error('color not supported'));
     }
@@ -247,10 +256,10 @@ class LightHandler implements ServiceHandler {
       const data = {};
       data[this.colorComponentBExpose.property] = value;
       this.accessory.queueDataForSetAction(data);
-      callback(null);
+      this.accessory.callSetCallbackWithOnlineState(callback);
     } else if (this.colorExpose?.name === 'color_xy') {
       this.convertAndPublishHueAndSaturationAsXY();
-      callback(null);
+      this.accessory.callSetCallbackWithOnlineState(callback);
     } else {
       callback(new Error('color not supported'));
     }

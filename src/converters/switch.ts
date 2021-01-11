@@ -50,7 +50,9 @@ class SwitchHandler implements ServiceHandler {
     accessory.log.debug(`Configuring Switch for ${serviceName}`);
     const service = accessory.getOrAddService(new hap.Service.Switch(serviceName, endpoint));
 
-    getOrAddCharacteristic(service, hap.Characteristic.On).on('set', this.handleSetOn.bind(this));
+    getOrAddCharacteristic(service, hap.Characteristic.On)
+      .on('set', this.handleSetOn.bind(this))
+      .on('get', this.accessory.characteristicCallbackForOnlineState);
     const onOffValues = new Map<CharacteristicValue, CharacteristicValue>();
     onOffValues.set(this.stateExpose.value_on, true);
     onOffValues.set(this.stateExpose.value_off, false);
@@ -75,7 +77,7 @@ class SwitchHandler implements ServiceHandler {
     const data = {};
     data[this.stateExpose.property] = (value as boolean) ? this.stateExpose.value_on : this.stateExpose.value_off;
     this.accessory.queueDataForSetAction(data);
-    callback(null);
+    this.accessory.callSetCallbackWithOnlineState(callback);
   }
 
   static generateIdentifier(endpoint: string | undefined) {

@@ -1,10 +1,10 @@
-import { Logger, Service } from 'homebridge';
+import { CharacteristicGetCallback, CharacteristicSetCallback, Logger, Service } from 'homebridge';
 import { ExposesEntry } from '../z2mModels';
 
 export interface BasicAccessory {
-    log: Logger;
-
-    displayName: string;
+    readonly log: Logger;
+    readonly displayName: string;
+    readonly isOnline: boolean;
 
     getOrAddService(service: Service): Service;
 
@@ -19,6 +19,10 @@ export interface BasicAccessory {
     registerServiceHandler(handler: ServiceHandler): void;
 
     isServiceHandlerIdKnown(identifier: string): boolean;
+
+    characteristicCallbackForOnlineState(cb: CharacteristicGetCallback): void;
+
+    callSetCallbackWithOnlineState(cb: CharacteristicSetCallback): void;
 }
 
 export interface ServiceHandler {

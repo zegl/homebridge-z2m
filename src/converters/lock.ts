@@ -74,14 +74,17 @@ class LockHandler implements ServiceHandler {
     accessory.log.debug(`Configuring LockMechanism for ${serviceName}`);
     const service = accessory.getOrAddService(new hap.Service.LockMechanism(serviceName, endpoint));
 
-    getOrAddCharacteristic(service, hap.Characteristic.LockTargetState).on('set', this.handleSetState.bind(this));
+    getOrAddCharacteristic(service, hap.Characteristic.LockTargetState)
+      .on('set', this.handleSetState.bind(this))
+      .on('get', this.accessory.characteristicCallbackForOnlineState);
     const stateValues = new Map<CharacteristicValue, CharacteristicValue>();
     stateValues.set(this.stateExpose.value_on, hap.Characteristic.LockTargetState.SECURED);
     stateValues.set(this.stateExpose.value_off, hap.Characteristic.LockTargetState.UNSECURED);
     this.monitors.push(new MappingCharacteristicMonitor(this.stateExpose.property, service, hap.Characteristic.LockTargetState,
       stateValues));
 
-    getOrAddCharacteristic(service, hap.Characteristic.LockCurrentState);
+    getOrAddCharacteristic(service, hap.Characteristic.LockCurrentState)
+      .on('get', this.accessory.characteristicCallbackForOnlineState);
     for (const value of this.lockStateExpose.values) {
       if (!lockStateMapping.has(value)) {
         lockStateMapping.set(value, hap.Characteristic.LockCurrentState.UNKNOWN);
@@ -111,7 +114,7 @@ class LockHandler implements ServiceHandler {
     const data = {};
     data[this.stateExpose.property] = (value as boolean) ? this.stateExpose.value_on : this.stateExpose.value_off;
     this.accessory.queueDataForSetAction(data);
-    callback(null);
+    this.accessory.callSetCallbackWithOnlineState(callback);
   }
 
   static generateIdentifier(endpoint: string | undefined) {
