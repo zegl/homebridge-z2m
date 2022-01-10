@@ -1,6 +1,12 @@
-import { Service } from 'homebridge';
-import { BasicAccessory, ServiceHandler } from '../converters/interfaces';
+import {BasicAccessory, BasicPlatform, ServiceHandler } from '../converters/interfaces';
+import { Controller, ControllerServiceMap, Service } from 'homebridge';
 import { BasicLogger } from '../logger';
+
+class DocsPlatform implements BasicPlatform {
+  isHomebridgeServerVersionGreaterOrEqualTo(version: string): boolean {
+    return version.length > 0;
+  }
+}
 
 export class DocsAccessory implements BasicAccessory {
   readonly log: BasicLogger = <BasicLogger><unknown>{
@@ -20,6 +26,8 @@ export class DocsAccessory implements BasicAccessory {
 
   private readonly services: Service[] = [];
   private readonly handlerIds = new Set<string>();
+  private readonly controllers = new Set<string>();
+  platform = new DocsPlatform();
 
   constructor(
     readonly displayName: string) { }
@@ -28,17 +36,37 @@ export class DocsAccessory implements BasicAccessory {
     return {};
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  isExperimentalFeatureEnabled(feature: string): boolean {
-    return false;
-  }
-
-  getDefaultServiceDisplayName(subType: string): string {
-    let name = 'Dummy';
+  getDefaultServiceDisplayName(subType: string | undefined): string {
+    let name = 'Documentation Accessory';
     if (subType !== undefined) {
       name += ` ${subType}`;
     }
     return name;
+  }
+
+  isAdaptiveLightingEnabled(): boolean {
+    return true;
+  }
+
+  getAdaptiveLightingMinimumColorTemperatureChange(): number {
+    return 0;
+  }
+
+  getAdaptiveLightingTransitionTime(): number {
+    return 0;
+  }
+
+  configureController(controller: Controller<ControllerServiceMap>): void {
+    this.controllers.add(controller.constructor.name);
+  }
+
+  getControllerNames(): string[] {
+    return [...this.controllers].sort();
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isExperimentalFeatureEnabled(feature: string): boolean {
+    return false;
   }
 
   getServicesAndCharacteristics(): Map<string, string[]> {
