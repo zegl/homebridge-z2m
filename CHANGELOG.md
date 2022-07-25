@@ -6,6 +6,10 @@ Since version 1.0.0, we try to follow the [Semantic Versioning](https://semver.o
 
 ## [Unreleased]
 
+### Added
+
+- Added support for Adaptive Lighting [#488](https://github.com/itavero/homebridge-z2m/pull/488)
+
 ## [1.9.0] - 2022-06-29
 
 ### Added
