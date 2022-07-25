@@ -20,6 +20,10 @@ the ADEO IG-CDZFB2AG010RA-MNZ
   * On
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from ADEO](../index.md#adeo)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/IG-CDZFB2AG010RA-MNZ.html)

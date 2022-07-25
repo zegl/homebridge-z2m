@@ -22,6 +22,10 @@ the Paul Neuhaus NLG-RGBW__light
   * Saturation
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Paul Neuhaus](../index.md#paul_neuhaus)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/NLG-RGBW__light.html)

@@ -20,6 +20,10 @@ the Skydance WZ5_cct
   * On
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Skydance](../index.md#skydance)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/WZ5_cct.html)

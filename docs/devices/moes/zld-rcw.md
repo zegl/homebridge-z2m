@@ -22,6 +22,10 @@ the Moes ZLD-RCW
   * Saturation
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Moes](../index.md#moes)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/ZLD-RCW.html)

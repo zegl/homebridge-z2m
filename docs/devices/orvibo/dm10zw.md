@@ -20,6 +20,10 @@ the ORVIBO DM10ZW
   * On
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from ORVIBO](../index.md#orvibo)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/DM10ZW.html)

@@ -20,6 +20,10 @@ the Innr RCL 240 T
   * On
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Innr](../index.md#innr)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/RCL_240_T.html)

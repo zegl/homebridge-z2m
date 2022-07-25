@@ -22,6 +22,10 @@ the GIDEALED ZC05M
   * Saturation
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from GIDEALED](../index.md#gidealed)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/ZC05M.html)

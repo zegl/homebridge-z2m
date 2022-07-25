@@ -20,6 +20,10 @@ the ADEO 9CZA-A806ST-Q1Z
   * On
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from ADEO](../index.md#adeo)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/9CZA-A806ST-Q1Z.html)

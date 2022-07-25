@@ -20,6 +20,10 @@ the Alchemy AL8TC13W-AP
   * On
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Alchemy](../index.md#alchemy)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/AL8TC13W-AP.html)

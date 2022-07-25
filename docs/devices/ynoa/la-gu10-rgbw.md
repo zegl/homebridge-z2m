@@ -22,6 +22,10 @@ the Ynoa LA-GU10-RGBW
   * Saturation
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Ynoa](../index.md#ynoa)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/LA-GU10-RGBW.html)

@@ -24,6 +24,10 @@ the Xiaomi ZNDDMK11LM
   * Current Temperature
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Xiaomi](../index.md#xiaomi)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/ZNDDMK11LM.html)

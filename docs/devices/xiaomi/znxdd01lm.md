@@ -20,6 +20,10 @@ the Xiaomi ZNXDD01LM
   * On
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Xiaomi](../index.md#xiaomi)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/ZNXDD01LM.html)

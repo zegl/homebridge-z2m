@@ -20,6 +20,10 @@ the Envilar ZG50CC-CCT-DRIVER
   * On
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Envilar](../index.md#envilar)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/ZG50CC-CCT-DRIVER.html)

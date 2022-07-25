@@ -20,6 +20,10 @@ the Sunricher HK-ZD-CCT-A
   * On
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Sunricher](../index.md#sunricher)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/HK-ZD-CCT-A.html)

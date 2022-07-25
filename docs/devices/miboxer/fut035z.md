@@ -20,6 +20,10 @@ the Miboxer FUT035Z
   * On
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Miboxer](../index.md#miboxer)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/FUT035Z.html)

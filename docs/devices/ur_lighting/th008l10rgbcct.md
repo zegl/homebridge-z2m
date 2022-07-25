@@ -22,6 +22,10 @@ the UR Lighting TH008L10RGBCCT
   * Saturation
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from UR Lighting](../index.md#ur_lighting)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/TH008L10RGBCCT.html)

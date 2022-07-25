@@ -20,6 +20,10 @@ the ADEO IST-CDZFB2AS007NA-MZN-01
   * On
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from ADEO](../index.md#adeo)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/IST-CDZFB2AS007NA-MZN-01.html)

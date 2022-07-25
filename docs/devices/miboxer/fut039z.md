@@ -22,6 +22,10 @@ the Miboxer FUT039Z
   * Saturation
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Miboxer](../index.md#miboxer)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/FUT039Z.html)

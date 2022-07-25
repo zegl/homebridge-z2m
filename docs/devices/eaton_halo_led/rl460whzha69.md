@@ -20,6 +20,10 @@ the Eaton/Halo LED RL460WHZHA69
   * On
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Eaton/Halo LED](../index.md#eaton_halo_led)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/RL460WHZHA69.html)

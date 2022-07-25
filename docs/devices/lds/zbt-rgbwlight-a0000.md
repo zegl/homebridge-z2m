@@ -22,6 +22,10 @@ the LDS ZBT-RGBWLight-A0000
   * Saturation
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from LDS](../index.md#lds)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/ZBT-RGBWLight-A0000.html)

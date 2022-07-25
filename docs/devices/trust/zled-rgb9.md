@@ -22,6 +22,10 @@ the Trust ZLED-RGB9
   * Saturation
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Trust](../index.md#trust)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/ZLED-RGB9.html)

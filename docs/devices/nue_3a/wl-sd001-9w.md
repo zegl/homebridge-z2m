@@ -22,6 +22,10 @@ the Nue / 3A WL-SD001-9W
   * Saturation
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Nue / 3A](../index.md#nue_3a)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/WL-SD001-9W.html)

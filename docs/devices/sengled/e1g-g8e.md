@@ -22,6 +22,10 @@ the Sengled E1G-G8E
   * Saturation
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from Sengled](../index.md#sengled)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/E1G-G8E.html)

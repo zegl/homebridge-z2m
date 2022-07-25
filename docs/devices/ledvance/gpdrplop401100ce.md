@@ -22,6 +22,10 @@ the LEDVANCE GPDRPLOP401100CE
   * Saturation
 
 
+## Other features
+* [Adaptive Lighting](../../light.md)
+
+
 # Related
 * [Other devices from LEDVANCE](../index.md#ledvance)
 * [Zigbee2MQTT documentation for this device](https://www.zigbee2mqtt.io/devices/GPDRPLOP401100CE.html)
