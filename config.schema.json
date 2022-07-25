@@ -307,7 +307,7 @@
                         "title": "Enabled",
                         "type": "boolean",
                         "required": false,
-                        "default": true
+                        "default": false
                      },
                      "min_ct_change": {
                         "title": "Minimum change in Color Temperature to trigger publish",
