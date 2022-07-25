@@ -6,4 +6,4 @@ export const PLATFORM_NAME = 'zigbee2mqtt';
 /**
  * This must match the name of your plugin as defined the package.json
  */
-export const PLUGIN_NAME = 'homebridge-z2m';
+export const PLUGIN_NAME = '@zegl/homebridge-z2m';
