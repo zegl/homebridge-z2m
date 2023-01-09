@@ -142,7 +142,7 @@ export class Zigbee2mqttAccessory implements BasicAccessory {
     }
 
     if (online) {
-      if (this.isAvailable || this.additionalConfig.ignore_availability === true) {
+      if (this.isAvailable) {
         // Accessory used to be available before Zigbee2MQTT went offline.
         // Mark all services as available again.
         this.sendLastValueOnMainCharacteristics();
