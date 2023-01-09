@@ -120,6 +120,9 @@ export class Zigbee2mqttAccessory implements BasicAccessory {
   }
 
   updateAvailability(available: boolean): void {
+    if (!this.availabilityEnabled) {
+      return;
+    }
     if (available !== this.isAvailable) {
       this.isAvailable = available;
       this.log.debug(`${this.displayName} is ${available ? 'available' : 'UNAVAILABLE'}`);
@@ -134,6 +137,10 @@ export class Zigbee2mqttAccessory implements BasicAccessory {
   }
 
   informOnZigbee2MqttOnlineStateChange(online: boolean): void {
+    if (this.additionalConfig.ignore_availability === true) {
+      return;
+    }
+
     if (online) {
       if (this.isAvailable || this.additionalConfig.ignore_availability === true) {
         // Accessory used to be available before Zigbee2MQTT went offline.
@@ -147,6 +154,10 @@ export class Zigbee2mqttAccessory implements BasicAccessory {
   }
 
   private updateErrorStateOnMainCharacteristics(status: HAPStatus): void {
+    if (this.additionalConfig.ignore_availability === true) {
+      return;
+    }
+
     this.log.debug(`Update "error" status for characteristics of ${this.displayName} to ${status}`);
     const error = new this.platform.api.hap.HapStatusError(status);
     for (const handler of this.serviceHandlers.values()) {
@@ -157,6 +168,10 @@ export class Zigbee2mqttAccessory implements BasicAccessory {
   }
 
   private sendLastValueOnMainCharacteristics(): void {
+    if (this.additionalConfig.ignore_availability === true) {
+      return;
+    }
+
     this.log.debug(`Send last value for main characteristics of ${this.displayName}`);
     for (const handler of this.serviceHandlers.values()) {
       for (const characteristic of handler.mainCharacteristics) {
